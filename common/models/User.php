@@ -1,0 +1,269 @@
+<?php
+namespace common\models;
+
+use Yii;
+use yii\base\NotSupportedException;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
+use yii\web\IdentityInterface;
+
+/**
+ * User model
+ *
+ * @property integer $id
+ * @property string $username
+ * @property string $passwordHash
+ * @property string $email
+ * @property string $authKey
+ * @property integer $status
+ * @property integer $createdAt
+ * @property integer $updatedAt
+ * @property string $password write-only password
+ * @property string|null $statusLabel read-only status label
+ * @property boolean $isEnabled read-only whether is enabled
+ */
+class User extends ActiveRecord implements StatusInterface, IdentityInterface
+{
+    /**
+     * The name of the insert scenario.
+     */
+    const SCENARIO_INSERT = 'insert';
+
+    /**
+     * @property string
+     */
+    public $passwordNew;
+
+    /**
+     * @property array|null
+     */
+    private static $statusLabels;
+
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return '{{%user}}';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdAt',
+                'updatedAtAttribute' => 'updatedAt',
+            ]
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['username'], 'trim'],
+            [['username'], 'required'],
+            [['username'], 'unique'],
+            [['username'], 'string', 'length' => [2, 20]],
+
+            [['passwordNew'], 'required', 'on' => [self::SCENARIO_INSERT]],
+            [['passwordNew'], 'string', 'length' => [6, 40]],
+
+            [['email'], 'trim'],
+            [['email'], 'email'],
+
+            [['status'], 'default', 'value' => self::STATUS_ENABLED],
+            [['status'], 'in', 'range' => [self::STATUS_ENABLED, self::STATUS_DISABLED]],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'username' => 'Username',
+            'passwordNew' => 'New password',
+            'passwordHash' => 'Hashed password',
+            'email' => 'Email',
+            'authKey' => 'Auth key',
+            'status' => 'Status',
+            'createdAt' => 'Create time',
+            'updatedAt' => 'Update time',
+        ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPosts()
+    {
+        return $this->hasMany(Post::className(), ['authorId' => 'id']);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function findIdentity($id)
+    {
+        return static::findOne(['id' => $id, 'status' => self::STATUS_ENABLED]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+        throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
+    }
+
+    /**
+     * Finds user by username
+     *
+     * @param string $username
+     * @return static|null
+     */
+    public static function findByUsername($username)
+    {
+        return static::findOne(['username' => $username, 'status' => self::STATUS_ENABLED]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getId()
+    {
+        return $this->getPrimaryKey();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAuthKey()
+    {
+        return $this->authKey;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function validateAuthKey($authKey)
+    {
+        return $this->getAuthKey() === $authKey;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function enable()
+    {
+        $this->status = self::STATUS_ENABLED;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function disable()
+    {
+        $this->status = self::STATUS_DISABLED;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getIsEnabled()
+    {
+        return $this->status === self::STATUS_ENABLED;
+    }
+
+    /**
+     * Gets status labels
+     *
+     * @return array
+     */
+    public static function getStatusLabels()
+    {
+        if (self::$statusLabels === null) {
+            self::$statusLabels = [
+                self::STATUS_ENABLED => 'Enabled',
+                self::STATUS_DISABLED => 'Disabled',
+            ];
+        }
+
+        return self::$statusLabels;
+    }
+
+    /**
+     * Gets status label of the model
+     *
+     * @return string|null
+     */
+    public function getStatusLabel()
+    {
+        $labels = static::getStatusLabels();
+
+        return $labels[$this->status] ?? null;
+    }
+
+    /**
+     * Validates password
+     *
+     * @param string $password password to validate
+     * @return bool if password provided is valid for current user
+     */
+    public function validatePassword($password)
+    {
+        return Yii::$app->security->validatePassword($password, $this->passwordHash);
+    }
+
+    /**
+     * Generates password hash from password and sets it to the model
+     *
+     * @param string $password
+     */
+    public function setPassword($password)
+    {
+        $this->passwordHash = Yii::$app->security->generatePasswordHash($password);
+    }
+
+    /**
+     * Generates "remember me" authentication key
+     */
+    public function generateAuthKey()
+    {
+        $this->authKey = Yii::$app->security->generateRandomString();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($insert) {
+                $this->generateAuthKey();
+            } elseif (!empty($this->passwordNew)) {
+                $this->setPassword($this->passwordNew);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function __toString()
+    {
+        return $this->username;
+    }
+}
