@@ -37,10 +37,12 @@ class Controller extends \yii\rest\Controller
                 'Access-Control-Expose-Headers' => ['X-Pagination-Current-Page'],
             ],
         ];
-        $behaviors['hostControl'] = [
-            'class' => 'yii\filters\HostControl',
-            'allowedHosts' => Yii::$app->params['allowedHosts'],
-        ];
+        if (!empty(Yii::$app->params['allowedHosts'])) {
+            $behaviors['hostControl'] = [
+                'class' => 'yii\filters\HostControl',
+                'allowedHosts' => Yii::$app->params['allowedHosts'],
+            ];
+        }
         unset($behaviors['rateLimiter']);
         return $behaviors;
     }

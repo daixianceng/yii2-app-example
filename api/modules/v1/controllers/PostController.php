@@ -10,7 +10,7 @@ use common\models\Post;
 class PostController extends \api\common\controllers\PostController
 {
     /**
-     * Index action
+     * @inheritdoc
      */
     public function actionIndex($category = 'all')
     {
