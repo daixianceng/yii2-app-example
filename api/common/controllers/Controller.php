@@ -36,7 +36,7 @@ class Controller extends \yii\rest\Controller
                 'Access-Control-Request-Headers' => ['*'],
                 'Access-Control-Allow-Credentials' => true,
                 'Access-Control-Max-Age' => 3600,
-                'Access-Control-Expose-Headers' => ['X-Pagination-Current-Page'],
+                'Access-Control-Expose-Headers' => ['X-Pagination-Current-Page', 'X-Pagination-Page-Count', 'X-Pagination-Per-Page', 'X-Pagination-Total-Count'],
             ],
         ];
         if (!empty(Yii::$app->params['allowedHosts'])) {
