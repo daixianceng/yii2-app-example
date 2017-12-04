@@ -22,7 +22,7 @@ use yii\web\IdentityInterface;
  * @property string|null $statusLabel read-only status label
  * @property boolean $isEnabled read-only whether is enabled
  */
-class User extends ActiveRecord implements StatusInterface, IdentityInterface
+class User extends ActiveRecord implements StatusInterface, SortInterface, IdentityInterface
 {
     /**
      * The name of the insert scenario.
@@ -45,6 +45,14 @@ class User extends ActiveRecord implements StatusInterface, IdentityInterface
     public static function tableName()
     {
         return '{{%user}}';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function sortField()
+    {
+        return 'id';
     }
 
     /**
@@ -98,6 +106,23 @@ class User extends ActiveRecord implements StatusInterface, IdentityInterface
             'status' => 'Status',
             'createdAt' => 'Create time',
             'updatedAt' => 'Update time',
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function fields()
+    {
+        return [
+            'id',
+            'username',
+            'email',
+            'status',
+            'statusLabel',
+            'isEnabled',
+            'createdAt',
+            'updatedAt',
         ];
     }
 

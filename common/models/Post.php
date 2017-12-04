@@ -120,6 +120,30 @@ class Post extends \yii\db\ActiveRecord implements StatusInterface, SortInterfac
     }
 
     /**
+     * @inheritdoc
+     */
+    public function fields()
+    {
+        return [
+            'id',
+            'categoryId',
+            'title',
+            'key',
+            'tags',
+            'tagCollection',
+            'intro',
+            'content',
+            'authorId',
+            'status',
+            'statusLabel',
+            'isEnabled',
+            'sequence',
+            'createdAt',
+            'updatedAt',
+        ];
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getCategory()

@@ -69,6 +69,19 @@ class Category extends \yii\db\ActiveRecord implements SortInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function fields()
+    {
+        return [
+            'id',
+            'key',
+            'name',
+            'sequence',
+        ];
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getPosts()

@@ -2,6 +2,8 @@
 namespace api\common\controllers;
 
 use Yii;
+use yii\base\Arrayable;
+use yii\data\DataProviderInterface;
 use yii\web\Response;
 
 /**
@@ -45,5 +47,20 @@ class Controller extends \yii\rest\Controller
         }
         unset($behaviors['rateLimiter']);
         return $behaviors;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function afterAction($action, $result)
+    {
+        if ($result instanceof Arrayable || $result instanceof DataProviderInterface) {
+            $result = [
+                'status' => 'success',
+                'data' => $this->serializeData($result),
+            ];
+        }
+
+        return parent::afterAction($action, $result);
     }
 }

@@ -44,6 +44,15 @@ return [
         ],
         'response' => [
             'format' => 'json',
+            'on beforeSend' => function ($event) {
+                $response = $event->sender;
+                if ($response->data !== null && !$response->isSuccessful) {
+                    $response->data = [
+                        'status' => 'error',
+                        'data' => $response->data,
+                    ];
+                }
+            },
         ]
     ],
     'params' => $params,
