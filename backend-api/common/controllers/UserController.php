@@ -2,9 +2,9 @@
 namespace backendApi\common\controllers;
 
 use Yii;
-use yii\data\ActiveDataProvider;
-use yii\web\BadRequestHttpException;
+use yii\web\NotFoundHttpException;
 use common\models\User;
+use backend\models\UserSearch;
 
 /**
  * User controller
@@ -16,16 +16,7 @@ class UserController extends Controller
      */
     public function actionIndex()
     {
-        $provider = new ActiveDataProvider([
-            'query' => User::find(),
-            'sort' => [
-                'defaultOrder' => [
-                    User::sortField() => SORT_ASC,
-                ],
-            ],
-        ]);
-
-        return $provider;
+        return (new UserSearch())->search(Yii::$app->request->queryParams);
     }
 
     /**
@@ -33,12 +24,22 @@ class UserController extends Controller
      */
     public function actionView($id)
     {
-        $model = User::findOne($id);
+        return $this->findModel($id);
+    }
 
-        if (!$model) {
-            throw new BadRequestHttpException('Bad request');
+    /**
+     * Finds the User model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param string $id
+     * @return User the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = User::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
         }
-
-        return $model;
     }
 }

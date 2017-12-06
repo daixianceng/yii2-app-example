@@ -62,6 +62,11 @@ class PostSearch extends Post
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => [
+                    Post::sortField() => SORT_ASC,
+                ],
+            ],
         ]);
 
         $this->load($params);
