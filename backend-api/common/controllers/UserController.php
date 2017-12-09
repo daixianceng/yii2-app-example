@@ -12,7 +12,8 @@ use backend\models\UserSearch;
 class UserController extends Controller
 {
     /**
-     * Index action
+     * Lists all User models.
+     * @return yii\data\ActiveDataProvider
      */
     public function actionIndex()
     {
@@ -20,11 +21,61 @@ class UserController extends Controller
     }
 
     /**
-     * View action
+     * Displays a single User model.
+     * @param string $id
+     * @return User
      */
     public function actionView($id)
     {
         return $this->findModel($id);
+    }
+
+    /**
+     * Creates a new User model.
+     * @return User
+     */
+    public function actionCreate()
+    {
+        $model = new User();
+        $model->setScenario(User::SCENARIO_INSERT);
+        $model->load(Yii::$app->request->post());
+        $model->save();
+
+        return $model;
+    }
+
+    /**
+     * Updates an existing User model.
+     * @param string $id
+     * @return User
+     */
+    public function actionUpdate($id)
+    {
+        $model = $this->findModel($id);
+        $model->load(Yii::$app->request->post());
+        $model->save();
+
+        return $model;
+    }
+
+    /**
+     * Deletes an existing User model.
+     * @param string $id
+     * @return array
+     */
+    public function actionDelete($id)
+    {
+        if ($this->findModel($id)->delete()) {
+            return [
+                'status' => 'success',
+                'data' => [],
+            ];
+        } else {
+            return [
+                'status' => 'fail',
+                'data' => [],
+            ];
+        }
     }
 
     /**

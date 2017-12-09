@@ -33,10 +33,22 @@ return [
             'showScriptName' => false,
             'rules' => [
                 'GET,HEAD <module>/categories' => '<module>/category/index',
+                'GET,HEAD <module>/category/<id>' => '<module>/category/view',
+                'POST <module>/category' => '<module>/category/create',
+                'PUT,PATCH <module>/category/<id>' => '<module>/category/update',
+                'DELETE <module>/category/<id>' => '<module>/category/delete',
+
                 'GET,HEAD <module>/posts' => '<module>/post/index',
-                'GET,HEAD <module>/posts/<id>' => '<module>/post/view',
+                'GET,HEAD <module>/post/<id>' => '<module>/post/view',
+                'POST <module>/post' => '<module>/post/create',
+                'PUT,PATCH <module>/post/<id>' => '<module>/post/update',
+                'DELETE <module>/post/<id>' => '<module>/post/delete',
+
                 'GET,HEAD <module>/users' => '<module>/user/index',
-                'GET,HEAD <module>/users/<id>' => '<module>/user/view',
+                'GET,HEAD <module>/user/<id>' => '<module>/user/view',
+                'POST <module>/user' => '<module>/user/create',
+                'PUT,PATCH <module>/user/<id>' => '<module>/user/update',
+                'DELETE <module>/user/<id>' => '<module>/user/delete',
             ],
         ],
         'request' => [

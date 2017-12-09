@@ -12,7 +12,8 @@ use backend\models\PostSearch;
 class PostController extends Controller
 {
     /**
-     * Index action
+     * Lists all Post models.
+     * @return yii\data\ActiveDataProvider
      */
     public function actionIndex()
     {
@@ -20,11 +21,61 @@ class PostController extends Controller
     }
 
     /**
-     * View action
+     * Displays a single Post model.
+     * @param string $id
+     * @return Post
      */
     public function actionView($id)
     {
         return $this->findModel($id);
+    }
+
+    /**
+     * Creates a new Post model.
+     * @return Post
+     */
+    public function actionCreate()
+    {
+        $model = new Post();
+        $model->authorId = Yii::$app->user->id;
+        $model->load(Yii::$app->request->post());
+        $model->save();
+
+        return $model;
+    }
+
+    /**
+     * Updates an existing Post model.
+     * @param string $id
+     * @return Post
+     */
+    public function actionUpdate($id)
+    {
+        $model = $this->findModel($id);
+        $model->load(Yii::$app->request->post());
+        $model->save();
+
+        return $model;
+    }
+
+    /**
+     * Deletes an existing Post model.
+     * @param string $id
+     * @return array
+     */
+    public function actionDelete($id)
+    {
+        if ($this->findModel($id)->delete()) {
+            return [
+                'status' => 'success',
+                'data' => [],
+            ];
+        } else {
+            return [
+                'status' => 'fail',
+                'data' => [],
+            ];
+        }
     }
 
     /**
