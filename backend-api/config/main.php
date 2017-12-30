@@ -51,23 +51,17 @@ return [
                 'DELETE <module>/user/<id>' => '<module>/user/delete',
             ],
         ],
+        'errorHandler' => [
+            'class' => 'common\rest\ErrorHandler',
+        ],
         'request' => [
             'parsers' => [
                 'application/json' => 'yii\web\JsonParser',
-            ]
+            ],
         ],
         'response' => [
             'format' => 'json',
-            'on beforeSend' => function ($event) {
-                $response = $event->sender;
-                if ($response->data !== null && !$response->isSuccessful) {
-                    $response->data = [
-                        'status' => 'error',
-                        'data' => $response->data,
-                    ];
-                }
-            },
-        ]
+        ],
     ],
     'params' => $params,
 ];

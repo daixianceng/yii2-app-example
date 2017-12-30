@@ -4,6 +4,8 @@ namespace backendApi\common\controllers;
 use Yii;
 use yii\web\NotFoundHttpException;
 use common\models\User;
+use common\rest\SuccessData;
+use common\rest\FailData;
 use backend\models\UserSearch;
 
 /**
@@ -32,49 +34,50 @@ class UserController extends Controller
 
     /**
      * Creates a new User model.
-     * @return User
+     * @return mixed
      */
     public function actionCreate()
     {
         $model = new User();
         $model->setScenario(User::SCENARIO_INSERT);
         $model->load(Yii::$app->request->post());
-        $model->save();
 
-        return $model;
+        if ($model->save()) {
+            Yii::$app->response->setStatusCode(201);
+            return $model;
+        } else {
+            return new FailData($model);
+        }
     }
 
     /**
      * Updates an existing User model.
      * @param string $id
-     * @return User
+     * @return mixed
      */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
         $model->load(Yii::$app->request->post());
-        $model->save();
 
-        return $model;
+        if ($model->save()) {
+            return $model;
+        } else {
+            return new FailData($model);
+        }
     }
 
     /**
      * Deletes an existing User model.
      * @param string $id
-     * @return array
+     * @return \common\rest\DataInterface
      */
     public function actionDelete($id)
     {
         if ($this->findModel($id)->delete()) {
-            return [
-                'status' => 'success',
-                'data' => [],
-            ];
+            return new SuccessData();
         } else {
-            return [
-                'status' => 'fail',
-                'data' => [],
-            ];
+            return new FailData();
         }
     }
 
