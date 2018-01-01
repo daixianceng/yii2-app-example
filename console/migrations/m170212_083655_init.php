@@ -19,8 +19,9 @@ class m170212_083655_init extends Migration
         $this->createTable('{{%user}}', [
             'id' => $this->primaryKey()->unsigned(),
             'username' => $this->string()->notNull()->comment('Userame'),
-            'authKey' => $this->string(32)->notNull()->comment('Authentication key'),
+            'authKey' => $this->string(32)->notNull()->comment('Authentication Key'),
             'passwordHash' => $this->string()->notNull()->comment('Password Hashed'),
+            'accessToken' => $this->string()->notNull()->comment('Access Token'),
             'email' => $this->string()->notNull()->comment('E-mail'),
             'status' => $this->smallInteger(1)->unsigned()->notNull()->comment('Status'),
             'createdAt' => $this->integer(10)->unsigned()->notNull()->comment('Create Time'),
