@@ -17,6 +17,11 @@ return [
         ],
     ],
     'components' => [
+        'user' => [
+            'identityClass' => 'common\models\User',
+            'enableSession' => false,
+            'loginUrl' => null,
+        ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
@@ -32,6 +37,8 @@ return [
             'enableStrictParsing' => true,
             'showScriptName' => false,
             'rules' => [
+                'POST <module>/login' => '<module>/site/login',
+
                 'GET,HEAD <module>/categories' => '<module>/category/index',
                 'GET,HEAD <module>/category/<id>' => '<module>/category/view',
                 'POST <module>/category' => '<module>/category/create',

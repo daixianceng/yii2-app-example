@@ -25,8 +25,12 @@ class Controller extends \yii\rest\Controller
     public function behaviors()
     {
         $behaviors = parent::behaviors();
+        $behaviors['authenticator'] = [
+            'class' => 'yii\filters\auth\HttpBearerAuth',
+            'optional' => ['site/*'],
+        ];
         $behaviors['contentNegotiator']['formats'] = [
-            'application/json' => Response::FORMAT_JSON
+            'application/json' => Response::FORMAT_JSON,
         ];
         $behaviors['corsFilter'] = [
             'class' => 'yii\filters\Cors',
