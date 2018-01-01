@@ -34,11 +34,22 @@ class m170212_083655_init extends Migration
         $admin->email = Yii::$app->params['adminEmail'];
         $admin->setPassword($admin->username);
         $admin->generateAuthKey();
+        $admin->generateAccessToken();
         $admin->enable();
         $admin->createdAt = $admin->updatedAt = time();
 
         // Insert the administrator into the `{{%user}}` table
-        $this->insert('{{%user}}', $admin->toArray());
+        $this->insert('{{%user}}', $admin->toArray([
+            'username',
+            'email',
+            'status',
+            'createdAt',
+            'updatedAt',
+        ], [
+            'passwordHash',
+            'authKey',
+            'accessToken'
+        ]));
 
         // Create the `{{%category}}` table
         $this->createTable('{{%category}}', [
