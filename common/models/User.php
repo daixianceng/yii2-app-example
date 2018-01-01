@@ -2,7 +2,6 @@
 namespace common\models;
 
 use Yii;
-use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
@@ -101,6 +100,7 @@ class User extends ActiveRecord implements StatusInterface, SortInterface, Ident
             'username' => 'Username',
             'passwordNew' => 'New password',
             'passwordHash' => 'Hashed password',
+            'accessToken' => 'Access token',
             'email' => 'Email',
             'authKey' => 'Auth key',
             'status' => 'Status',
@@ -127,6 +127,19 @@ class User extends ActiveRecord implements StatusInterface, SortInterface, Ident
     }
 
     /**
+     * @inheritdoc
+     */
+    public function extraFields()
+    {
+        return [
+            'passwordNew',
+            'passwordHash',
+            'authKey',
+            'accessToken',
+        ];
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getPosts()
@@ -147,7 +160,7 @@ class User extends ActiveRecord implements StatusInterface, SortInterface, Ident
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
+        return static::findOne(['accessToken' => $token, 'status' => self::STATUS_ENABLED]);
     }
 
     /**
@@ -265,6 +278,14 @@ class User extends ActiveRecord implements StatusInterface, SortInterface, Ident
     public function generateAuthKey()
     {
         $this->authKey = Yii::$app->security->generateRandomString();
+    }
+
+    /**
+     * Generates access token
+     */
+    public function generateAccessToken()
+    {
+        $this->accessToken = Yii::$app->security->generateRandomString();
     }
 
     /**
