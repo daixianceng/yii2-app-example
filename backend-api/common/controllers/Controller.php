@@ -27,7 +27,6 @@ class Controller extends \yii\rest\Controller
         $behaviors = parent::behaviors();
         $behaviors['authenticator'] = [
             'class' => 'yii\filters\auth\HttpBearerAuth',
-            'optional' => ['site/*'],
         ];
         $behaviors['contentNegotiator']['formats'] = [
             'application/json' => Response::FORMAT_JSON,

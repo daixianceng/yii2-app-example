@@ -11,6 +11,16 @@ use backendApi\common\models\LoginForm;
 class SiteController extends Controller
 {
     /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        $behaviors = parent::behaviors();
+        $behaviors['authenticator']['optional'] = ['*'];
+        return $behaviors;
+    }
+
+    /**
      * Login action.
      *
      * @return mixed
@@ -19,7 +29,7 @@ class SiteController extends Controller
     {
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return Yii::$app->user->getIdentity();
+            return Yii::$app->user->getIdentity()->toArray([], ['accessToken']);
         } else {
             return new FailData($model);
         }
