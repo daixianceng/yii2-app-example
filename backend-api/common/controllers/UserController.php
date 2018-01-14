@@ -42,12 +42,15 @@ class UserController extends Controller
         $model->setScenario(User::SCENARIO_INSERT);
         $model->load(Yii::$app->request->post());
 
-        if ($model->save()) {
-            Yii::$app->response->setStatusCode(201);
-            return $model;
-        } else {
-            return new FailData($model);
+        if ($model->validate()) {
+            $model->setPassword($model->passwordNew);
+            if ($model->save(false)) {
+                Yii::$app->response->setStatusCode(201);
+                return $model;
+            }
         }
+
+        return new FailData($model);
     }
 
     /**
@@ -60,11 +63,16 @@ class UserController extends Controller
         $model = $this->findModel($id);
         $model->load(Yii::$app->request->post());
 
-        if ($model->save()) {
-            return $model;
-        } else {
-            return new FailData($model);
+        if ($model->validate()) {
+            if (!empty($model->passwordNew)) {
+                $model->setPassword($model->passwordNew);
+            }
+            if ($model->save(false)) {
+                return $model;
+            }
         }
+
+        return new FailData($model);
     }
 
     /**
