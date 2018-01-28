@@ -35,7 +35,7 @@ class PostSearch extends Post
     {
         return [
             [['categoryId', 'authorId', 'status'], 'integer'],
-            [['createTimeRange'], 'match', 'pattern' => '/^.+\s\-\s.+$/'],
+            [['createTimeRange'], 'match', 'pattern' => '/^.*\s\-\s.*$/'],
             [['title', 'key'], 'safe'],
         ];
     }
@@ -86,8 +86,8 @@ class PostSearch extends Post
 
         $query->andFilterWhere(['like', 'title', $this->title])
               ->andFilterWhere(['like', 'key', $this->key])
-              ->andFilterWhere(['>=', 'createdAt', $this->createTimeStart])
-              ->andFilterWhere(['<', 'createdAt', $this->createTimeEnd]);
+              ->andFilterWhere(['>=', 'createdAt', $this->createTimeStart ?: null])
+              ->andFilterWhere(['<', 'createdAt', $this->createTimeEnd ?: null]);
 
         return $dataProvider;
     }

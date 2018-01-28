@@ -35,7 +35,7 @@ class UserSearch extends User
     {
         return [
             [['status'], 'integer'],
-            [['createTimeRange'], 'match', 'pattern' => '/^.+\s\-\s.+$/'],
+            [['createTimeRange'], 'match', 'pattern' => '/^.*\s\-\s.*$/'],
             [['username', 'email'], 'safe'],
         ];
     }
@@ -84,8 +84,8 @@ class UserSearch extends User
 
         $query->andFilterWhere(['like', 'username', $this->username])
               ->andFilterWhere(['like', 'email', $this->email])
-              ->andFilterWhere(['>=', 'createdAt', $this->createTimeStart])
-              ->andFilterWhere(['<', 'createdAt', $this->createTimeEnd]);
+              ->andFilterWhere(['>=', 'createdAt', $this->createTimeStart ?: null])
+              ->andFilterWhere(['<', 'createdAt', $this->createTimeEnd ?: null]);
 
         return $dataProvider;
     }
