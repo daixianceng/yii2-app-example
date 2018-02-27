@@ -12,6 +12,7 @@ use yii\web\IdentityInterface;
  * @property integer $id
  * @property string $username
  * @property string $passwordHash
+ * @property string $avatar
  * @property string $email
  * @property string $authKey
  * @property integer $status
@@ -82,6 +83,20 @@ class User extends ActiveRecord implements StatusInterface, SortInterface, Ident
             [['passwordNew'], 'required', 'on' => [self::SCENARIO_INSERT]],
             [['passwordNew'], 'string', 'length' => [6, 40]],
 
+            ['avatarFile', 'default', 'value' => Yii::$app->params['user.defaultAvatar']],
+            [
+                'avatarFile',
+                'image',
+                'extensions' => 'jpg, png',
+                'mimeTypes' => 'image/jpeg, image/png',
+                'checkExtensionByMimeType' => true,
+                'minSize' => 100,
+                'maxSize' => 204800,
+                'tooBig' => 'The {attribute} size can not be greater than 200KB',
+                'tooSmall' => 'The {attribute} size can not be less than 0.1KB',
+                'notImage' => 'The {file} is not a valid image file',
+            ],
+
             [['email'], 'trim'],
             [['email'], 'email'],
 
@@ -101,6 +116,8 @@ class User extends ActiveRecord implements StatusInterface, SortInterface, Ident
             'passwordNew' => 'New password',
             'passwordHash' => 'Hashed password',
             'accessToken' => 'Access token',
+            'avatar' => 'Avatar Name',
+            'avatarFile' => 'Avatar File',
             'email' => 'Email',
             'authKey' => 'Auth key',
             'status' => 'Status',
@@ -117,6 +134,7 @@ class User extends ActiveRecord implements StatusInterface, SortInterface, Ident
         return [
             'id',
             'username',
+            'avatar',
             'email',
             'status',
             'statusLabel',
@@ -286,6 +304,14 @@ class User extends ActiveRecord implements StatusInterface, SortInterface, Ident
     public function generateAccessToken()
     {
         $this->accessToken = Yii::$app->security->generateRandomString();
+    }
+
+    /**
+     * Generates avatar name
+     */
+    public function generateAvatarName($extension)
+    {
+        $this->avatar = Yii::$app->security->generateRandomString(32) . '.' . $extension;
     }
 
     /**

@@ -22,6 +22,7 @@ class m170212_083655_init extends Migration
             'authKey' => $this->string(32)->notNull()->comment('Authentication Key'),
             'passwordHash' => $this->string()->notNull()->comment('Password Hashed'),
             'accessToken' => $this->string()->notNull()->comment('Access Token'),
+            'avatar' => $this->string()->notNull()->comment('Avatar Name'),
             'email' => $this->string()->notNull()->comment('E-mail'),
             'status' => $this->smallInteger(1)->unsigned()->notNull()->comment('Status'),
             'createdAt' => $this->integer(10)->unsigned()->notNull()->comment('Create Time'),
@@ -31,6 +32,7 @@ class m170212_083655_init extends Migration
         // Initialize the administrator model
         $admin = new User();
         $admin->username = Yii::$app->params['init.adminUsername'];
+        $admin->avatar = Yii::$app->params['user.defaultAvatar'];
         $admin->email = Yii::$app->params['adminEmail'];
         $admin->setPassword($admin->username);
         $admin->generateAuthKey();
