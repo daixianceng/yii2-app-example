@@ -15,14 +15,15 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.0.0",
-        "yiisoft/yii2": "~2.0.11",
-        "yiisoft/yii2-bootstrap": "~2.1.0@dev",
+        "yiisoft/yii2": "~2.0.14",
+        "yiisoft/yii2-bootstrap": "2.1.x-dev",
         "yiisoft/yii2-swiftmailer": "~2.0.0",
         "rmrevin/yii2-fontawesome": "~2.17",
-        "bower-asset/bootstrap": "~4.0.0@alpha",
+        "bower-asset/bootstrap": "~4.0.0",
         "bower-asset/jquery": "2.2.*",
         "himiklab/yii2-sortable-grid-view-widget": "*",
         "kartik-v/yii2-date-range": "dev-master",
+        "kartik-v/yii2-widget-fileinput": "*",
         "kartik-v/yii2-widget-select2": "@dev",
         "2amigos/yii2-ckeditor-widget": "~2.0.0",
         "miloschuman/yii2-highcharts-widget": "dev-master"
