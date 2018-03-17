@@ -43,6 +43,7 @@ class m170212_083655_init extends Migration
         // Insert the administrator into the `{{%user}}` table
         $this->insert('{{%user}}', $admin->toArray([
             'username',
+            'avatar',
             'email',
             'status',
             'createdAt',
