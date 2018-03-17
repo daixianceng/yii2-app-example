@@ -44,8 +44,8 @@ return [
         ],
         'assetManager' => [
             'assetMap' => [
-                'bootstrap.css' => 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css',
-                'bootstrap.js' => 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js',
+                'bootstrap.css' => 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css',
+                'bootstrap.js' => 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js',
             ],
         ],
     ],
