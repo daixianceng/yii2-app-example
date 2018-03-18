@@ -5,6 +5,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
+use common\helpers\Url;
 
 /**
  * User model
@@ -28,6 +29,16 @@ class User extends ActiveRecord implements StatusInterface, SortInterface, Ident
      * The name of the insert scenario.
      */
     const SCENARIO_INSERT = 'insert';
+
+    /**
+     * The name of the upload avatar scenario.
+     */
+    const SCENARIO_UPLOAD_AVATAR = 'upload-avatar';
+
+    /**
+     * @property \yii\web\UploadedFile|null
+     */
+    public $avatarFile;
 
     /**
      * @property string
@@ -83,7 +94,7 @@ class User extends ActiveRecord implements StatusInterface, SortInterface, Ident
             [['passwordNew'], 'required', 'on' => [self::SCENARIO_INSERT]],
             [['passwordNew'], 'string', 'length' => [6, 40]],
 
-            ['avatarFile', 'default', 'value' => Yii::$app->params['user.defaultAvatar']],
+            [['avatarFile'], 'required', 'on' => [self::SCENARIO_UPLOAD_AVATAR]],
             [
                 'avatarFile',
                 'image',
@@ -118,6 +129,7 @@ class User extends ActiveRecord implements StatusInterface, SortInterface, Ident
             'accessToken' => 'Access token',
             'avatar' => 'Avatar Name',
             'avatarFile' => 'Avatar File',
+            'avatarURL' => 'Avatar URL',
             'email' => 'Email',
             'authKey' => 'Auth key',
             'status' => 'Status',
@@ -135,6 +147,7 @@ class User extends ActiveRecord implements StatusInterface, SortInterface, Ident
             'id',
             'username',
             'avatar',
+            'avatarURL',
             'email',
             'status',
             'statusLabel',
@@ -267,6 +280,16 @@ class User extends ActiveRecord implements StatusInterface, SortInterface, Ident
         $labels = static::getStatusLabels();
 
         return $labels[$this->status] ?? null;
+    }
+
+    /**
+     * Gets avatar URL of the model
+     *
+     * @return string
+     */
+    public function getAvatarURL()
+    {
+        return Url::toAvatar($this->avatar);
     }
 
     /**

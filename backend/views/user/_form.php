@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use kartik\file\FileInput;
 use common\models\User;
 
 /* @var $this yii\web\View */
@@ -11,11 +12,25 @@ use common\models\User;
 
 <div>
 
-    <?php $form = ActiveForm::begin(['layout' => 'horizontal']); ?>
+    <?php $form = ActiveForm::begin([
+        'layout' => 'horizontal',
+        'options' => ['enctype' => 'multipart/form-data']
+    ]); ?>
+
+    <?= $form->field($model, 'avatarFile')->widget(FileInput::className(), [
+        'options' => ['accept' => 'image/*'],
+        'pluginOptions' => [
+            'showUpload' => false,
+            'browseLabel' => 'Select Image',
+            'removeLabel' => 'Remove',
+            'initialPreview' => $model->isNewRecord ? [] : [$model->avatarURL],
+            'initialPreviewAsData' => true,
+        ],
+    ]) ?>
 
     <?= $form->field($model, 'username') ?>
 
-    <?= $form->field($model, 'passwordNew')->passwordInput()->hint('Required when create new.') ?>
+    <?= $form->field($model, 'passwordNew')->passwordInput()->hint('Required when creating new one.') ?>
 
     <?= $form->field($model, 'email')->input('email') ?>
 

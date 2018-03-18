@@ -4,6 +4,7 @@ namespace backend\controllers;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\UploadedFile;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\User;
@@ -74,15 +75,33 @@ class UserController extends Controller
     {
         $model = new User();
         $model->setScenario(User::SCENARIO_INSERT);
-        $model->load(Yii::$app->request->post());
 
-        if ($model->validate()) {
-            $model->setPassword($model->passwordNew);
-            if ($model->save(false)) {
-                return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+
+            $model->avatarFile = UploadedFile::getInstance($model, 'avatarFile');
+
+            if ($model->validate()) {
+
+                if ($model->avatarFile) {
+                    $model->generateAvatarName($model->avatarFile->extension);
+                    $filename = Yii::getAlias(Yii::$app->params['user.avatarPath']) . DIRECTORY_SEPARATOR . $model->avatar;
+
+                    if (!$model->avatarFile->saveAs($filename)) {
+                        $model->avatar = null;
+                        goto render;
+                    }
+                } else {
+                    $model->avatar = Yii::$app->params['user.defaultAvatar'];
+                }
+
+                $model->setPassword($model->passwordNew);
+                if ($model->save(false)) {
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
             }
         }
 
+        render:
         return $this->render('create', [
             'model' => $model,
         ]);
@@ -97,17 +116,34 @@ class UserController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $model->load(Yii::$app->request->post());
 
-        if ($model->validate()) {
-            if (!empty($model->passwordNew)) {
-                $model->setPassword($model->passwordNew);
-            }
-            if ($model->save(false)) {
-                return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+
+            $model->avatarFile = UploadedFile::getInstance($model, 'avatarFile');
+
+            if ($model->validate()) {
+
+                if ($model->avatarFile) {
+                    $avatarOriginal = $model->avatar;
+                    $model->generateAvatarName($model->avatarFile->extension);
+                    $filename = Yii::getAlias(Yii::$app->params['user.avatarPath']) . DIRECTORY_SEPARATOR . $model->avatar;
+
+                    if (!$model->avatarFile->saveAs($filename)) {
+                        $model->avatar = $avatarOriginal;
+                        goto render;
+                    }
+                }
+
+                if (!empty($model->passwordNew)) {
+                    $model->setPassword($model->passwordNew);
+                }
+                if ($model->save(false)) {
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
             }
         }
 
+        render:
         return $this->render('update', [
             'model' => $model,
         ]);

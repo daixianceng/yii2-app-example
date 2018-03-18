@@ -3,9 +3,11 @@ namespace backendApi\common\controllers;
 
 use Yii;
 use yii\web\NotFoundHttpException;
+use yii\web\UploadedFile;
 use common\models\User;
 use common\rest\SuccessData;
 use common\rest\FailData;
+use common\exceptions\UploadException;
 use backend\models\UserSearch;
 
 /**
@@ -43,14 +45,19 @@ class UserController extends Controller
         $model->load(Yii::$app->request->post());
 
         if ($model->validate()) {
+            $model->avatar = Yii::$app->params['user.defaultAvatar'];
             $model->setPassword($model->passwordNew);
             if ($model->save(false)) {
                 Yii::$app->response->setStatusCode(201);
                 return $model;
+            } else {
+                return new FailData([
+                    'message' => 'Failed to save model',
+                ]);
             }
+        } else {
+            return new FailData($model);
         }
-
-        return new FailData($model);
     }
 
     /**
@@ -69,10 +76,51 @@ class UserController extends Controller
             }
             if ($model->save(false)) {
                 return $model;
+            } else {
+                return new FailData([
+                    'message' => 'Failed to save model',
+                ]);
             }
+        } else {
+            return new FailData($model);
+        }
+    }
+
+    /**
+     * Updates avatar of an existing User model.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionUpdateAvatar($id)
+    {
+        $model = $this->findModel($id);
+        $model->setScenario(User::SCENARIO_UPLOAD_AVATAR);
+        $model->avatarFile = UploadedFile::getInstanceByName('file');
+
+        if ($model->avatarFile && $model->avatarFile->getHasError()) {
+            throw new UploadException($model->avatarFile->error);
         }
 
-        return new FailData($model);
+        if ($model->validate('avatarFile')) {
+
+            $model->generateAvatarName($model->avatarFile->extension);
+            $filename = Yii::getAlias(Yii::$app->params['user.avatarPath']) . DIRECTORY_SEPARATOR . $model->avatar;
+
+            if (!$model->avatarFile->saveAs($filename)) {
+                return new FailData([
+                    'message' => 'Failed to save file to disk',
+                ]);
+            }
+            if ($model->save(false)) {
+                return $model;
+            } else {
+                return new FailData([
+                    'message' => 'Failed to save model',
+                ]);
+            }
+        } else {
+            return new FailData($model);
+        }
     }
 
     /**
@@ -85,7 +133,9 @@ class UserController extends Controller
         if ($this->findModel($id)->delete()) {
             return new SuccessData();
         } else {
-            return new FailData();
+            return new FailData([
+                'message' => 'Failed to delete model',
+            ]);
         }
     }
 

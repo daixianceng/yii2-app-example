@@ -56,6 +56,7 @@ return [
                 'POST <module>/user' => '<module>/user/create',
                 'PUT,PATCH <module>/user/<id>' => '<module>/user/update',
                 'DELETE <module>/user/<id>' => '<module>/user/delete',
+                'POST <module>/user/<id>/avatar' => '<module>/user/update-avatar',
             ],
         ],
         'errorHandler' => [
