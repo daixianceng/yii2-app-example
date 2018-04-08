@@ -76,7 +76,9 @@ class CategoryController extends Controller
         if ($this->findModel($id)->delete()) {
             return new SuccessData();
         } else {
-            return new FailData();
+            return new FailData([
+                'message' => 'Failed to delete model',
+            ]);
         }
     }
 
