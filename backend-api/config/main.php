@@ -46,6 +46,7 @@ return [
                 'DELETE <module>/category/<id>' => '<module>/category/delete',
 
                 'GET,HEAD <module>/posts' => '<module>/post/index',
+                'GET,HEAD <module>/post-tags' => '<module>/post/tags',
                 'GET,HEAD <module>/post/<id>' => '<module>/post/view',
                 'POST <module>/post' => '<module>/post/create',
                 'PUT,PATCH <module>/post/<id>' => '<module>/post/update',

@@ -23,6 +23,15 @@ class PostController extends Controller
     }
 
     /**
+     * Lists all post tags
+     * @return array
+     */
+    public function actionTags()
+    {
+        return Post::findAllTags();
+    }
+
+    /**
      * Displays a single Post model.
      * @param string $id
      * @return Post
