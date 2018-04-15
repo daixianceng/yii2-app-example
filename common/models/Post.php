@@ -231,7 +231,9 @@ class Post extends \yii\db\ActiveRecord implements StatusInterface, SortInterfac
     public static function findAllTags()
     {
         $tagsColumn = static::find()->select('tags')->column();
-        $allTags = array_unique(explode(',', implode(',', $tagsColumn)));
+        $allTags = array_values(
+            array_unique(explode(',', implode(',', $tagsColumn)))
+        );
 
         return $allTags;
     }
