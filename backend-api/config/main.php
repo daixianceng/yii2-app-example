@@ -39,6 +39,8 @@ return [
             'rules' => [
                 'POST <module>/login' => '<module>/site/login',
 
+                'GET,HEAD <module>/calculation/daily-posts' => '<module>/calculation/daily-posts',
+
                 'GET,HEAD <module>/categories' => '<module>/category/index',
                 'GET,HEAD <module>/category/<id>' => '<module>/category/view',
                 'POST <module>/category' => '<module>/category/create',
