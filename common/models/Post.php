@@ -232,7 +232,12 @@ class Post extends \yii\db\ActiveRecord implements StatusInterface, SortInterfac
     {
         $tagsColumn = static::find()->select('tags')->column();
         $allTags = array_values(
-            array_unique(explode(',', implode(',', $tagsColumn)))
+            array_filter(
+                array_unique(explode(',', implode(',', $tagsColumn))),
+                function($val) {
+                    return $val !== '';
+                }
+            )
         );
 
         return $allTags;
