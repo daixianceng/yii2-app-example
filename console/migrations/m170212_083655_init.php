@@ -3,12 +3,15 @@
 use yii\db\Migration;
 use common\models\User;
 
+/**
+ * Class m170212_083655_init
+ */
 class m170212_083655_init extends Migration
 {
     /**
      * @inheritdoc
      */
-    public function up()
+    public function safeUp()
     {
         $tableOptions = null;
         if ($this->db->driverName === 'mysql') {
@@ -77,24 +80,7 @@ class m170212_083655_init extends Migration
             'createdAt' => $this->integer(10)->unsigned()->notNull()->comment('Create Time'),
             'updatedAt' => $this->integer(10)->unsigned()->notNull()->comment('Update Time'),
         ], $tableOptions);
-    }
 
-    /**
-     * @inheritdoc
-     */
-    public function down()
-    {
-        $this->delete('{{%user}}', ['id' => 1]);
-        $this->dropTable('{{%user}}');
-        $this->dropTable('{{%category}}');
-        $this->dropTable('{{%post}}');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function safeUp()
-    {
         return true;
     }
 
@@ -103,6 +89,26 @@ class m170212_083655_init extends Migration
      */
     public function safeDown()
     {
+        $this->delete('{{%user}}', ['id' => 1]);
+        $this->dropTable('{{%user}}');
+        $this->dropTable('{{%category}}');
+        $this->dropTable('{{%post}}');
+
         return true;
     }
+
+    /*
+    // Use up()/down() to run migration code without a transaction.
+    public function up()
+    {
+
+    }
+
+    public function down()
+    {
+        echo "m170212_083655_init cannot be reverted.\n";
+
+        return false;
+    }
+    */
 }
