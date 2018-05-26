@@ -52,6 +52,7 @@ class Category extends \yii\db\ActiveRecord implements SortInterface
         return [
             [['key', 'name'], 'required'],
             [['key', 'name'], 'string', 'max' => 255],
+            [['key'], 'unique'],
         ];
     }
 
