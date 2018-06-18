@@ -2,9 +2,9 @@
 namespace api\common\controllers;
 
 use Yii;
-use yii\base\Arrayable;
-use yii\data\DataProviderInterface;
 use yii\web\Response;
+use common\rest\DataInterface;
+use common\rest\SuccessData;
 
 /**
  * Base controller
@@ -15,7 +15,7 @@ class Controller extends \yii\rest\Controller
      * @inheritdoc
      */
     public $serializer = [
-        'class' => 'yii\rest\Serializer',
+        'class' => 'common\rest\Serializer',
         'collectionEnvelope' => 'items',
     ];
 
@@ -54,11 +54,8 @@ class Controller extends \yii\rest\Controller
      */
     public function afterAction($action, $result)
     {
-        if ($result instanceof Arrayable || $result instanceof DataProviderInterface) {
-            $result = [
-                'status' => 'success',
-                'data' => $this->serializeData($result),
-            ];
+        if (!$result instanceof DataInterface) {
+            $result = new SuccessData($result);
         }
 
         return parent::afterAction($action, $result);

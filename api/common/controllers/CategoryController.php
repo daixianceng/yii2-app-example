@@ -2,7 +2,8 @@
 namespace api\common\controllers;
 
 use Yii;
-use common\models\Category;
+use backend\models\CategorySearch;
+
 
 /**
  * Category controller
@@ -10,13 +11,11 @@ use common\models\Category;
 class CategoryController extends Controller
 {
     /**
-     * Index action
+     * Lists all Category models.
+     * @return yii\data\ActiveDataProvider
      */
     public function actionIndex()
     {
-        return [
-            'status' => 'success',
-            'data' => Category::find()->orderBy(Category::sortField())->all(),
-        ];
+        return (new CategorySearch())->search(Yii::$app->request->queryParams);
     }
 }

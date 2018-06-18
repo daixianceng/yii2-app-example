@@ -3,8 +3,9 @@ namespace api\common\controllers;
 
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\web\BadRequestHttpException;
+use yii\web\NotFoundHttpException;
 use common\models\Post;
+use backend\models\PostSearch;
 
 /**
  * Post controller
@@ -12,33 +13,37 @@ use common\models\Post;
 class PostController extends Controller
 {
     /**
-     * Index action
+     * Lists all Post models.
+     * @return yii\data\ActiveDataProvider
      */
     public function actionIndex()
     {
-        $provider = new ActiveDataProvider([
-            'query' => Post::find(),
-            'sort' => [
-                'defaultOrder' => [
-                    Post::sortField() => SORT_ASC,
-                ],
-            ],
-        ]);
-
-        return $provider;
+        return (new PostSearch())->search(Yii::$app->request->queryParams);
     }
 
     /**
-     * View action
+     * Displays a single Post model.
+     * @param string $id
+     * @return Post
      */
     public function actionView($id)
     {
-        $model = Post::findOne($id);
+        return $this->findModel($id);
+    }
 
-        if (!$model) {
-            throw new BadRequestHttpException('Bad request');
+    /**
+     * Finds the Post model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param string $id
+     * @return Post the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = Post::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
         }
-
-        return $model;
     }
 }
