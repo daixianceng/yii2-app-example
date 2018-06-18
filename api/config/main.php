@@ -34,13 +34,14 @@ return [
             'rules' => [
                 'GET,HEAD <module>/categories' => '<module>/category/index',
                 'GET,HEAD <module>/posts' => '<module>/post/index',
-                'GET,HEAD <module>/posts/<id>' => '<module>/post/view',
+                'GET,HEAD <module>/post-tags' => '<module>/post/tags',
+                'GET,HEAD <module>/post/<id>' => '<module>/post/view',
             ],
         ],
         'request' => [
             'parsers' => [
                 'application/json' => 'yii\web\JsonParser',
-            ]
+            ],
         ],
         'response' => [
             'format' => 'json',
@@ -53,7 +54,7 @@ return [
                     ];
                 }
             },
-        ]
+        ],
     ],
     'params' => $params,
 ];

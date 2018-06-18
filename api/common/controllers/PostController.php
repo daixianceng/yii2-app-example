@@ -2,7 +2,6 @@
 namespace api\common\controllers;
 
 use Yii;
-use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
 use common\models\Post;
 use backend\models\PostSearch;
@@ -19,6 +18,15 @@ class PostController extends Controller
     public function actionIndex()
     {
         return (new PostSearch())->search(Yii::$app->request->queryParams);
+    }
+
+    /**
+     * Lists all post tags
+     * @return array
+     */
+    public function actionTags()
+    {
+        return Post::findAllTags();
     }
 
     /**
