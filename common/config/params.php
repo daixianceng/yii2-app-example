@@ -5,4 +5,5 @@ return [
     'imageBaseUrl' => 'http://localhost/images',
     'user.defaultAvatar' => 'default.png',
     'user.avatarPath' => '@images/backend/avatar',
+    'post.coverPath' => '@images/post-cover',
 ];

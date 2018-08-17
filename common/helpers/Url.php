@@ -11,4 +11,11 @@ class Url extends \yii\helpers\Url
 
         return $baseUrl . '/backend/avatar/' . $name;
     }
+
+    public static function toCover($name)
+    {
+        $baseUrl = Yii::$app->params['imageBaseUrl'];
+
+        return $baseUrl . '/post-cover/' . $name;
+    }
 }
