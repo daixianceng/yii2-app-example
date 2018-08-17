@@ -3,9 +3,11 @@ namespace backendApi\common\controllers;
 
 use Yii;
 use yii\web\NotFoundHttpException;
+use yii\web\UploadedFile;
 use common\models\Post;
 use common\rest\SuccessData;
 use common\rest\FailData;
+use common\exceptions\UploadException;
 use backend\models\PostSearch;
 
 /**
@@ -48,12 +50,33 @@ class PostController extends Controller
     public function actionCreate()
     {
         $model = new Post();
+        $model->setScenario(Post::SCENARIO_INSERT);
+        $model->coverFile = UploadedFile::getInstanceByName('file');
         $model->authorId = Yii::$app->user->id;
         $model->load(Yii::$app->request->post());
 
-        if ($model->save()) {
-            Yii::$app->response->setStatusCode(201);
-            return $model;
+        if ($model->coverFile && $model->coverFile->getHasError()) {
+            throw new UploadException($model->coverFile->error);
+        }
+
+        if ($model->validate()) {
+
+            $model->generateCoverName($model->coverFile->extension);
+            $filename = Yii::getAlias(Yii::$app->params['post.coverPath']) . DIRECTORY_SEPARATOR . $model->cover;
+
+            if (!$model->coverFile->saveAs($filename)) {
+                return new FailData([
+                    'message' => 'Failed to save file to disk',
+                ]);
+            }
+            if ($model->save(false)) {
+                Yii::$app->response->setStatusCode(201);
+                return $model;
+            } else {
+                return new FailData([
+                    'message' => 'Failed to save model',
+                ]);
+            }
         } else {
             return new FailData($model);
         }
@@ -67,10 +90,33 @@ class PostController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $model->coverFile = UploadedFile::getInstanceByName('file');
         $model->load(Yii::$app->request->post());
 
-        if ($model->save()) {
-            return $model;
+        if ($model->coverFile && $model->coverFile->getHasError()) {
+            throw new UploadException($model->coverFile->error);
+        }
+
+        if ($model->validate()) {
+
+            if ($model->coverFile) {
+                $model->generateCoverName($model->coverFile->extension);
+                $filename = Yii::getAlias(Yii::$app->params['post.coverPath']) . DIRECTORY_SEPARATOR . $model->cover;
+
+                if (!$model->coverFile->saveAs($filename)) {
+                    return new FailData([
+                        'message' => 'Failed to save file to disk',
+                    ]);
+                }
+            }
+
+            if ($model->save(false)) {
+                return $model;
+            } else {
+                return new FailData([
+                    'message' => 'Failed to save model',
+                ]);
+            }
         } else {
             return new FailData($model);
         }

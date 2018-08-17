@@ -51,7 +51,7 @@ return [
                 'GET,HEAD <module>/post-tags' => '<module>/post/tags',
                 'GET,HEAD <module>/post/<id>' => '<module>/post/view',
                 'POST <module>/post' => '<module>/post/create',
-                'PUT,PATCH <module>/post/<id>' => '<module>/post/update',
+                'POST,PUT,PATCH <module>/post/<id>' => '<module>/post/update',
                 'DELETE <module>/post/<id>' => '<module>/post/delete',
 
                 'GET,HEAD <module>/users' => '<module>/user/index',

@@ -4,6 +4,7 @@ namespace common\models;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use himiklab\sortablegrid\SortableGridBehavior;
+use common\helpers\Url;
 
 /**
  * This is the model class for table "{{%post}}".
@@ -13,6 +14,7 @@ use himiklab\sortablegrid\SortableGridBehavior;
  * @property string $title
  * @property string $key
  * @property string $tags
+ * @property string $cover
  * @property string $intro
  * @property string $content
  * @property string $authorId
@@ -25,6 +27,11 @@ use himiklab\sortablegrid\SortableGridBehavior;
 class Post extends \yii\db\ActiveRecord implements StatusInterface, SortInterface
 {
     /**
+     * The name of the insert scenario.
+     */
+    const SCENARIO_INSERT = 'insert';
+
+    /**
      * @property array
      */
     public $tagCollection = [];
@@ -33,6 +40,11 @@ class Post extends \yii\db\ActiveRecord implements StatusInterface, SortInterfac
      * @property array|null
      */
     private static $statusLabels;
+
+    /**
+     * @property \yii\web\UploadedFile|null
+     */
+    public $coverFile;
 
     /**
      * @inheritdoc
@@ -87,6 +99,20 @@ class Post extends \yii\db\ActiveRecord implements StatusInterface, SortInterfac
             [['tagCollection'], 'each', 'rule' => ['string', 'max' => 10]],
             [['tagCollection'], 'filter', 'filter' => 'array_unique'],
 
+            [['coverFile'], 'required', 'on' => [self::SCENARIO_INSERT]],
+            [
+                'coverFile',
+                'image',
+                'extensions' => 'jpg, png',
+                'mimeTypes' => 'image/jpeg, image/png',
+                'checkExtensionByMimeType' => true,
+                'minSize' => 102400,
+                'maxSize' => 1024000,
+                'tooBig' => 'The {attribute} size can not be greater than 1MB',
+                'tooSmall' => 'The {attribute} size can not be less than 100KB',
+                'notImage' => 'The {file} is not a valid image file',
+            ],
+
             [['intro'], 'trim'],
             [['intro'], 'string', 'length' => [10, 140]],
 
@@ -109,6 +135,9 @@ class Post extends \yii\db\ActiveRecord implements StatusInterface, SortInterfac
             'key' => 'Key',
             'tags' => 'Tags',
             'tagCollection' => 'Tags',
+            'cover' => 'Cover Name',
+            'coverFile' => 'Cover File',
+            'coverURL' => 'Cover URL',
             'intro' => 'Introduction',
             'content' => 'Content',
             'authorId' => 'Author',
@@ -131,6 +160,8 @@ class Post extends \yii\db\ActiveRecord implements StatusInterface, SortInterfac
             'key',
             'tags',
             'tagCollection',
+            'cover',
+            'coverURL',
             'intro',
             'content',
             'authorId',
@@ -213,6 +244,16 @@ class Post extends \yii\db\ActiveRecord implements StatusInterface, SortInterfac
     }
 
     /**
+     * Gets cover URL of the model
+     *
+     * @return string
+     */
+    public function getCoverURL()
+    {
+        return Url::toCover($this->cover);
+    }
+
+    /**
      * Finds post by key
      *
      * @param string $key
@@ -241,6 +282,14 @@ class Post extends \yii\db\ActiveRecord implements StatusInterface, SortInterfac
         );
 
         return $allTags;
+    }
+
+    /**
+     * Generates cover name
+     */
+    public function generateCoverName($extension)
+    {
+        $this->cover = Yii::$app->security->generateRandomString(32) . '.' . $extension;
     }
 
     /**

@@ -72,6 +72,7 @@ class m170212_083655_init extends Migration
             'title' => $this->string()->notNull()->comment('Title'),
             'key' => $this->string()->notNull()->comment('Key'),
             'tags' => $this->string()->notNull()->comment('Tags'),
+            'cover' => $this->string()->notNull()->comment('Cover'),
             'intro' => $this->text()->notNull()->comment('Introduction'),
             'content' => $this->text()->notNull()->comment('Content'),
             'authorId' => $this->integer(10)->unsigned()->notNull()->comment('Author ID'),
