@@ -33,6 +33,7 @@ return [
             'showScriptName' => false,
             'rules' => [
                 'GET,HEAD <module>/categories' => '<module>/category/index',
+                'GET,HEAD <module>/categories-with-posts' => '<module>/category/with-posts',
                 'GET,HEAD <module>/posts' => '<module>/post/index',
                 'GET,HEAD <module>/post-tags' => '<module>/post/tags',
                 'GET,HEAD <module>/post/<id>' => '<module>/post/view',
