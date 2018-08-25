@@ -68,6 +68,7 @@ class m180521_151010_demo extends Migration
         }
 
         $postIndex = 0;
+        $coverFilename = 'demo.jpg';
         while ($postIndex < $this->postNumber) {
             $post = new Post();
             $post->id = $this->startId + $postIndex;
@@ -75,6 +76,7 @@ class m180521_151010_demo extends Migration
             $post->title = 'title_' . $post->id;
             $post->key = 'title_' . $post->id;
             $post->tags = 'tag1,tag2,tag3';
+            $post->cover = $coverFilename;
             $post->intro = 'This is a post with ID ' . $post->id;
             $post->content = '<p>' . $post->intro . '</p>';
             $post->authorId = $demo->id;
@@ -89,6 +91,7 @@ class m180521_151010_demo extends Migration
                 'title',
                 'key',
                 'tags',
+                'cover',
                 'intro',
                 'content',
                 'authorId',
@@ -99,6 +102,13 @@ class m180521_151010_demo extends Migration
             ]));
 
             $postIndex ++;
+        }
+
+        $source = Yii::getAlias('@console/data') . DIRECTORY_SEPARATOR . $coverFilename;
+        $dest = Yii::getAlias(Yii::$app->params['post.coverPath']) . DIRECTORY_SEPARATOR . $coverFilename;
+
+        if (!file_exists($dest)) {
+            return copy($source, $dest);
         }
 
         return true;
