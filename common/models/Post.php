@@ -106,7 +106,7 @@ class Post extends \yii\db\ActiveRecord implements StatusInterface, SortInterfac
                 'extensions' => 'jpg, png',
                 'mimeTypes' => 'image/jpeg, image/png',
                 'checkExtensionByMimeType' => true,
-                'minSize' => 102400,
+                'minSize' => 10240,
                 'maxSize' => 1024000,
                 'tooBig' => 'The {attribute} size can not be greater than 1MB',
                 'tooSmall' => 'The {attribute} size can not be less than 100KB',
