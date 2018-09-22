@@ -50,7 +50,6 @@ class PostController extends Controller
     public function actionCreate()
     {
         $model = new Post();
-        $model->setScenario(Post::SCENARIO_INSERT);
         $model->coverFile = UploadedFile::getInstanceByName('file');
         $model->authorId = Yii::$app->user->id;
         $model->load(Yii::$app->request->post());
@@ -61,14 +60,17 @@ class PostController extends Controller
 
         if ($model->validate()) {
 
-            $model->generateCoverName($model->coverFile->extension);
-            $filename = Yii::getAlias(Yii::$app->params['post.coverPath']) . DIRECTORY_SEPARATOR . $model->cover;
+            if ($model->coverFile) {
+                $model->generateCoverName($model->coverFile->extension);
+                $filename = Yii::getAlias(Yii::$app->params['post.coverPath']) . DIRECTORY_SEPARATOR . $model->cover;
 
-            if (!$model->coverFile->saveAs($filename)) {
-                return new FailData([
-                    'message' => 'Failed to save file to disk',
-                ]);
+                if (!$model->coverFile->saveAs($filename)) {
+                    return new FailData([
+                        'message' => 'Failed to save file to disk',
+                    ]);
+                }
             }
+
             if ($model->save(false)) {
                 Yii::$app->response->setStatusCode(201);
                 return $model;
@@ -92,6 +94,7 @@ class PostController extends Controller
         $model = $this->findModel($id);
         $model->coverFile = UploadedFile::getInstanceByName('file');
         $model->load(Yii::$app->request->post());
+        Yii::info(Yii::$app->request->post());
 
         if ($model->coverFile && $model->coverFile->getHasError()) {
             throw new UploadException($model->coverFile->error);
@@ -108,6 +111,8 @@ class PostController extends Controller
                         'message' => 'Failed to save file to disk',
                     ]);
                 }
+            } elseif (Yii::$app->request->post('removeCover')) {
+                $model->cover = '';
             }
 
             if ($model->save(false)) {

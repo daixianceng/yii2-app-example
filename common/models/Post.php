@@ -99,7 +99,6 @@ class Post extends \yii\db\ActiveRecord implements StatusInterface, SortInterfac
             [['tagCollection'], 'each', 'rule' => ['string', 'max' => 10]],
             [['tagCollection'], 'filter', 'filter' => 'array_unique'],
 
-            [['coverFile'], 'required', 'on' => [self::SCENARIO_INSERT]],
             [
                 'coverFile',
                 'image',
@@ -246,11 +245,11 @@ class Post extends \yii\db\ActiveRecord implements StatusInterface, SortInterfac
     /**
      * Gets cover URL of the model
      *
-     * @return string
+     * @return string|null
      */
     public function getCoverURL()
     {
-        return Url::toCover($this->cover);
+        return $this->cover ? Url::toCover($this->cover) : null;
     }
 
     /**
