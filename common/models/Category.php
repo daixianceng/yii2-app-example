@@ -4,6 +4,7 @@ namespace common\models;
 use Yii;
 use yii\db\Query;
 use himiklab\sortablegrid\SortableGridBehavior;
+use common\models\StatusInterface;
 
 /**
  * This is the model class for table "{{%category}}".
@@ -88,6 +89,14 @@ class Category extends \yii\db\ActiveRecord implements SortInterface
     public function getPosts()
     {
         return $this->hasMany(Post::className(), ['categoryId' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAvailablePosts()
+    {
+        return $this->getPosts()->andOnCondition(['status' => StatusInterface::STATUS_ENABLED]);
     }
 
     /**
